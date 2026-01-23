@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Button } from "./components/ui/button";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -9,7 +10,7 @@ function App() {
         const res = await fetch("/api/hello");
         if (!res.ok) return;
 
-        const data = await res.json();
+        const data = await res.text();
         setMessage(data);
       } catch (err) {
         console.error(err);
@@ -19,7 +20,10 @@ function App() {
     loadData();
   }, []);
   return (
-    <p className="font-bold p-9 mt-7 text-9xl text-amber-950">{message}</p>
+    <div className="ml-3">
+      <p className="p-8 bg-red-500 text-white text-5xl">{message}</p>
+      <Button>Button</Button>
+    </div>
   );
 }
 
