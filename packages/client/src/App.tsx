@@ -18,7 +18,9 @@ function App() {
 
     loadData();
   }, []);
-  return <div>{message}</div>;
+  return (
+    <p className="font-bold p-9 mt-7 text-9xl text-amber-950">{message}</p>
+  );
 }
 
 export default App;
