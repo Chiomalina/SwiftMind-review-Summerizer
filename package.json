@@ -1,18 +1,23 @@
 {
-  "name": "swift-mind-review-summerizer",
-  "module": "index.ts",
-  "type": "module",
-  "private": true,
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
-  "workspace": [
-    "packages/*"
-  ],
-  "dependencies": {
-    "dotenv": "^17.2.3"
-  }
+   "name": "swift-mind-review-summerizer",
+   "module": "index.ts",
+   "type": "module",
+   "private": true,
+   "scripts": {
+      "dev": "bun run index.ts",
+      "format": "prettier --write ."
+   },
+   "devDependencies": {
+      "@types/bun": "latest",
+      "prettier": "^3.8.1"
+   },
+   "peerDependencies": {
+      "typescript": "^5"
+   },
+   "workspace": [
+      "packages/*"
+   ],
+   "dependencies": {
+      "dotenv": "^17.2.3"
+   }
 }
