@@ -3,6 +3,7 @@ import type { Response, Request } from 'express';
 import dotenv from 'dotenv';
 import OpenAI from 'openai';
 import z from 'zod';
+import { ConversationRepository } from './repositories/conversation.repository';
 
 dotenv.config();
 
@@ -28,7 +29,6 @@ let lastResponseId: string | null = null;
 // conversationId -> lastResponseId
 // conv1 -> 100
 // conv2 -> 200
-const conversations = new Map<string, string>();
 
 //Input validation with zod
 const chatSchema = z.object({
@@ -53,20 +53,26 @@ app.post('/api/chat', async (req: Request, res: Response) => {
       return;
    }
 
-   const { prompt, conversationId } = req.body;
+   // Error handling to catch all types of error(browser error, server error, network error etc)
+   try {
+      const { prompt, conversationId } = req.body;
 
-   const response = await client.responses.create({
-      model: 'gpt-4o-mini',
-      input: prompt,
-      temperature: 0.2,
-      max_output_tokens: 100,
-      previous_response_id: conversations.get(conversationId),
-   });
+      const response = await client.responses.create({
+         model: 'gpt-4o-mini',
+         input: prompt,
+         temperature: 0.2,
+         max_output_tokens: 100,
+         previous_response_id:
+            ConversationRepository.getLastResponseId(conversationId),
+      });
 
-   conversations.set(conversationId, response.id);
-   lastResponseId = response.id;
+      ConversationRepository.setLastResponseId(conversationId, response.id);
+      lastResponseId = response.id;
 
-   res.json({ message: response.output_text });
+      res.json({ message: response.output_text });
+   } catch (error) {
+      res.status(500).json({ error: 'Failed to generate a response' });
+   }
 });
 
 // Anotate types in home route
