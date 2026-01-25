@@ -17,6 +17,7 @@ app.use(express.json());
 const port = process.env.PORT || 3000;
 
 // Anotate types in home route
+
 app.get('/', (req: Request, res: Response) => {
    res.send('Hello World!');
 });
@@ -25,7 +26,7 @@ app.post('/api/chat', async (req: Request, res: Response) => {
    const { prompt } = req.body;
 
    const response = await client.responses.create({
-      model: 'gpt-40-mini',
+      model: 'gpt-4o-mini',
       input: prompt,
       temperature: 0.2,
       max_output_tokens: 100,
