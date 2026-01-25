@@ -1,7 +1,7 @@
-// Implementation detail (Storing data in memory) shouldn't be exported
+// Implementation details(the main hidden logic)
 const conversations = new Map<string, string>();
 
-// Export public interface as constact of repository
+// Interface exported as constant
 export const ConversationRepository = {
    getLastResponseId(conversationId: string) {
       return conversations.get(conversationId);
