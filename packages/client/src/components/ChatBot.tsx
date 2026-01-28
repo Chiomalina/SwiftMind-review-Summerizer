@@ -21,6 +21,8 @@ type Message = {
 
 function ChatBot() {
    const [messages, setMessages] = useState<Message[]>([]);
+   const [isBotTyping, setIsBotTyping] = useState(false);
+
    const conversationId = useRef(crypto.randomUUID());
 
    // Destructure toolboxes to be used in useForm before accessing them.
@@ -28,7 +30,7 @@ function ChatBot() {
 
    const onSubmit = async ({ prompt }: FormData) => {
       setMessages((prev) => [...prev, { content: prompt, role: 'user' }]);
-      console.log(prompt);
+      setIsBotTyping(true);
 
       // reseting the text area to empty
       reset();
@@ -38,6 +40,7 @@ function ChatBot() {
          conversationId: conversationId.current,
       });
       setMessages((prev) => [...prev, { content: data.message, role: 'bot' }]);
+      setIsBotTyping(false);
    };
 
    const onKeyDown = (e: KeyboardEvent<HTMLFormElement>) => {
@@ -49,7 +52,7 @@ function ChatBot() {
 
    return (
       <div>
-         <div className="flex flex-col gap-4">
+         <div className="flex flex-col gap-4 ml-2 mr-2 mt-3 py-5 px-5">
             {messages.map((message, index) => (
                <p
                   key={index}
@@ -63,6 +66,13 @@ function ChatBot() {
                   <ReactMarkdown>{message.content}</ReactMarkdown>
                </p>
             ))}
+            {isBotTyping && (
+               <div className="flex gap-1 px-3 py-3 bg-gray-300 rounded-xl self-start">
+                  <div className="w-2 h-2 rounded-full bg-gray-200 animate-pulse"></div>
+                  <div className="w-2 h-2 rounded-full bg-gray-500 animate-pulse [animation-delay:0.2s]"></div>
+                  <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse [animation-delay:0.4s]"></div>
+               </div>
+            )}
          </div>
          <form
             onSubmit={handleSubmit(onSubmit)}
