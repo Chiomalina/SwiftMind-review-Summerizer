@@ -1,6 +1,6 @@
 import ReactMarkdown from 'react-markdown';
 import type { KeyboardEvent } from 'react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { Button } from './ui/button';
@@ -22,11 +22,17 @@ type Message = {
 function ChatBot() {
    const [messages, setMessages] = useState<Message[]>([]);
    const [isBotTyping, setIsBotTyping] = useState(false);
+   const formRef = useRef<HTMLFormElement | null>(null);
 
    const conversationId = useRef(crypto.randomUUID());
 
    // Destructure toolboxes to be used in useForm before accessing them.
    const { register, handleSubmit, reset, formState } = useForm<FormData>();
+
+   // Ensuring scroll event
+   useEffect(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth' });
+   }, [messages]);
 
    const onSubmit = async ({ prompt }: FormData) => {
       setMessages((prev) => [...prev, { content: prompt, role: 'user' }]);
@@ -50,12 +56,23 @@ function ChatBot() {
       }
    };
 
+   // prevent copying default HTMLEvent
+   const onCopyMessage = (e: React.ClipboardEvent) => {
+      const selection = window.getSelection()?.toString().trim();
+      if (selection) {
+         e.preventDefault();
+         e.clipboardData.setData('text/plain', selection);
+      }
+   }
+   
+
    return (
       <div>
          <div className="flex flex-col gap-4 ml-2 mr-2 mt-3 py-5 px-5">
             {messages.map((message, index) => (
                <p
                   key={index}
+                  onCopy={onCopyMessage}
                   className={`px-3 py-1 rounded-xl 
                      ${
                         message.role === 'user'
@@ -77,6 +94,8 @@ function ChatBot() {
          <form
             onSubmit={handleSubmit(onSubmit)}
             onKeyDown={onKeyDown}
+            // Scrolling effect
+            ref={formRef}
             className="mt-4 mr-3 flex flex-col gap-2 items-end border-2 p-4 rounded-3xl"
          >
             <textarea
